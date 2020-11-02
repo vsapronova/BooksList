@@ -21,15 +21,15 @@
                     <button class="button" type="submit" v-bind:disabled="search === ''">Search</button>
                 </div>
             </form>
-            <div v-if="error == null && totalBooks > 0" class="pages">
-                <span>{{ startBook }} - {{ endBook }} of {{ totalBooks }}</span>
+            <div v-if="pagination != null && pagination.totalBooks > 0" class="pages">
+                <span>{{ pagination.startBook }} - {{ pagination.endBook }} of {{ pagination.totalBooks }}</span>
                 <button @click.stop.prevent="pagePrev()" v-bind:disabled="page <= 1" class="pages-button prev">Prev</button>
                 <button @click.stop.prevent="pageNext()" v-bind:disabled="page >= totalPages" class="pages-button next">Next</button>
             </div>        
         </div>
         <div style="padding-top: 180px">
-            <div v-if="error == null">
-                <div v-if="totalBooks > 0" class="books-cards">
+            <div v-if="pagination != null && books != null">
+                <div v-if="pagination.totalBooks > 0" class="books-cards">
                     <div class="book-card" v-for="book in books" v-bind:key="book.id">
                         <img v-bind:src="book.imageUrl" />
                         <div>
@@ -38,9 +38,12 @@
                         </div>
                     </div>
                 </div>
-                <div v-if="totalBooks == 0">
+                <div v-if="pagination.totalBooks == 0">
                     Sorry, no books found...
-                </div> 
+                </div>
+            </div>
+            <div v-if="loading">
+                Loading    
             </div>
             <div v-if="error != null">
                 <h2>Sorry, unexpected error has happened</h2>
@@ -55,27 +58,30 @@ var app = new Vue({
     el: "#app",
     data: {
         search: "George",
-        books: [],
+        books: null,
         page: 1,
-        startBook: 0,
-        endBook: 0,
-        totalBooks: 0,
-        totalPages: 0,
-        error: null
+        pagination: null,
+        error: null,
+        loading: false
     },
     methods: {
         loadBooks() {
             this.error = null
+            this.books = null
+            this.pagination = null
+            this.loading = true
             fetch(`http://localhost:3001/search?search=${this.search}&page=${this.page}`, { method: "GET" })
                 .then(response => {
                     if (response.status === 200) {
                         response.json()
                             .then(json => {
                                 this.books = json.books
-                                this.totalBooks = json.metadata.totalBooks
-                                this.startBook = json.metadata.startBook
-                                this.endBook = json.metadata.endBook
-                                this.totalPages = Math.ceil(json.metadata.totalBooks / json.metadata.pageSize)
+                                this.pagination = {
+                                    totalBooks: json.metadata.totalBooks,
+                                    startBook: json.metadata.startBook,
+                                    endBook: json.metadata.endBook,
+                                    totalPages: Math.ceil(json.metadata.totalBooks / json.metadata.pageSize)
+                                }
                             })
                     } else {
                         response.json()
@@ -87,6 +93,7 @@ var app = new Vue({
                 .catch(message => {
                     this.error = message
                 })
+                .finally(() => { this.loading = false })
         },
         doSearch() {
             this.page = 1

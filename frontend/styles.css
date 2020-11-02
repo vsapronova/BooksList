@@ -64,7 +64,8 @@ input {
     font-weight: 500;
     height: 42px;
     padding: 0px 10px;
-    margin: 0px 10px;
+    margin: 0px;
+    margin-left: 10px;
 }
 
 .button:disabled {

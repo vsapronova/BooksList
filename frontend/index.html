@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="styles.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+
+    <title>FindYourBook</title>
+</head>
+<body>
+    <div id="app" class="container">
+        <div style="position: fixed; top: 0px; width: 100%; background-color: white;">
+            <div class="header">
+                <h1>Search your next book with Goodreads</h1>
+            </div>
+            <form @submit.prevent="doSearch()">
+                <div class="search">
+                    <input v-model="search" placeholder="Goodreads Book" />
+                    <p class="input-label">You can enter book or author or title or phrase</p>
+                    <button class="button" type="submit" v-bind:disabled="search === ''">Search</button>
+                </div>
+            </form>
+            <div v-if="error == null && totalBooks > 0" class="pages">
+                <span>{{ startBook }} - {{ endBook }} of {{ totalBooks }}</span>
+                <button @click.stop.prevent="pagePrev()" v-bind:disabled="page <= 1" class="pages-button prev">Prev</button>
+                <button @click.stop.prevent="pageNext()" v-bind:disabled="page >= totalPages" class="pages-button next">Next</button>
+            </div>        
+        </div>
+        <div style="padding-top: 180px">
+            <div v-if="error == null">
+                <div v-if="totalBooks > 0" class="books-cards">
+                    <div class="book-card" v-for="book in books" v-bind:key="book.id">
+                        <img v-bind:src="book.imageUrl" />
+                        <div>
+                            <p class="book-title">{{ book.title }}</p>
+                            <p class="book-author">By: {{ book.author }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div v-if="totalBooks == 0">
+                    Sorry, no books found...
+                </div> 
+            </div>
+            <div v-if="error != null">
+                <h2>Sorry, unexpected error has happened</h2>
+                {{ error }} 
+            </div>
+        </div>
+    </div>
+</body>
+
+<script>
+var app = new Vue({
+    el: "#app",
+    data: {
+        search: "George",
+        books: [],
+        page: 1,
+        startBook: 0,
+        endBook: 0,
+        totalBooks: 0,
+        totalPages: 0,
+        error: null
+    },
+    methods: {
+        loadBooks() {
+            this.error = null
+            fetch(`http://localhost:3001/search?search=${this.search}&page=${this.page}`, { method: "GET" })
+                .then(response => {
+                    if (response.status === 200) {
+                        response.json()
+                            .then(json => {
+                                this.books = json.books
+                                this.totalBooks = json.metadata.totalBooks
+                                this.startBook = json.metadata.startBook
+                                this.endBook = json.metadata.endBook
+                                this.totalPages = Math.ceil(json.metadata.totalBooks / json.metadata.pageSize)
+                            })
+                    } else {
+                        response.json()
+                            .then(json => {
+                                this.error = json.message
+                            })
+                    }
+                })
+                .catch(message => {
+                    this.error = message
+                })
+        },
+        doSearch() {
+            this.page = 1
+            this.loadBooks()
+        },
+        pagePrev() {
+            this.page = this.page-1
+            this.loadBooks()
+
+        },
+        pageNext() {
+            this.page = this.page+1
+            this.loadBooks()
+
+        }
+    }
+})
+</script>
+</html>

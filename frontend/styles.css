@@ -1,0 +1,126 @@
+.container {
+    /* min-height: 100vh; */
+    font-family: BlinkMacSystemFont,-apple-system,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,Helvetica,Arial,sans-serif;  
+}
+
+/* .fixed-div {
+    width: 100%;
+    position: fixed;
+    top: 0;
+    z-index: 1000;
+} */
+
+.header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+h1 {
+    color: #363636;
+    font-weight: 400;
+}
+
+.search {
+    display: grid;
+    grid-template-columns: 1fr 1fr min-content 1fr;
+    grid-template-rows: 1fr;
+}
+
+::placeholder {
+    color: #dbdbdb;
+}
+
+input {
+    border-color: #dbdbdb;
+    height: 40px;
+    cursor: text;
+    box-shadow: inset 0 1px 2px #dbdbdb;
+    grid-column: 2/3;
+    border-radius: 4px;
+    border-width: 1px;
+    font-size: 1.25rem;
+    color: #363636;
+}
+
+.input-label {
+    grid-column: 2/3;
+    margin: 0;
+    color: #4A4A4A;
+    font-size: 0.75rem;
+    font-weight: 400;
+}
+
+.button {
+    grid-column: 3/4;
+    grid-row: 1/2;
+    border-radius: 4px;
+    border-color: #dbdbdb;
+    border: 1px solid transparent;
+    background: #DCADDD;
+    color: white;
+    font-size: 1.25rem;
+    font-weight: 500;
+    height: 42px;
+    padding: 0px 10px;
+    margin: 0px 10px;
+}
+
+.button:disabled {
+    background: #4a4a4a;
+    color: lightgray;
+}
+
+.pages {
+    width: 100%;
+    display: inline-block;
+    text-align: right;
+    margin-right: 40px;
+}
+
+/* pagination-button please!!!! */
+.pages-button {
+    border: 1px solid transparent;
+    background: white;
+    font-weight: 600;
+    color: #363636;
+    cursor: pointer;
+}
+
+.pages-button:disabled {
+    color: lightgray;
+}
+
+.books-cards {
+    margin-top: 150px;
+    overflow: auto;
+    margin: 1rem 1rem;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(min-content, 300px));
+    grid-template-rows: min-content;
+    grid-gap: 20px;
+}
+
+.book-card {
+    display: flex;
+    justify-content: left;
+}
+
+.book-card img {
+    margin-right: 10px;
+}
+
+.book-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin: 0px;
+}
+
+.book-author {
+    font-size: 0.8rem;
+    margin: 0px;
+    margin-top: 10px;
+}
+
+

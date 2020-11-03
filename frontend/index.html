@@ -10,24 +10,24 @@
 </head>
 <body>
     <div id="app" class="container">
-        <div style="position: fixed; top: 0px; width: 100%; background-color: white;">
+        <div class="static-block">
             <div class="header">
-                <h1>Search your next book with Goodreads</h1>
+                <h1>Search your book with Goodreads</h1>
             </div>
             <form @submit.prevent="doSearch()">
-                <div class="search">
-                    <input v-model="search" placeholder="Goodreads Book" />
-                    <p class="input-label">You can enter book or author or title or phrase</p>
+                <div class="search-grid">
+                    <input v-model="search" class="input" placeholder="Goodreads Book" />
+                    <label class="input-label">You can enter book or author or title or phrase</label>
                     <button class="button" type="submit" v-bind:disabled="search === ''">Search</button>
                 </div>
             </form>
-            <div v-if="pagination != null && pagination.totalBooks > 0" class="pages">
-                <span>{{ pagination.startBook }} - {{ pagination.endBook }} of {{ pagination.totalBooks }}</span>
-                <button @click.stop.prevent="pagePrev()" v-bind:disabled="page <= 1" class="pages-button prev">Prev</button>
-                <button @click.stop.prevent="pageNext()" v-bind:disabled="page >= totalPages" class="pages-button next">Next</button>
+            <div v-if="pagination != null && pagination.totalBooks > 0" class="pagination">
+                <span class="books-start-end" >{{ pagination.startBook }} - {{ pagination.endBook }} of {{ pagination.totalBooks }}</span>
+                <button @click.stop.prevent="pagePrev()" v-bind:disabled="page <= 1">Prev</button>
+                <button @click.stop.prevent="pageNext()" v-bind:disabled="page >= pagination.totalPages">Next</button>
             </div>        
         </div>
-        <div style="padding-top: 180px">
+        <div class="books-block">
             <div v-if="pagination != null && books != null">
                 <div v-if="pagination.totalBooks > 0" class="books-cards">
                     <div class="book-card" v-for="book in books" v-bind:key="book.id">
@@ -38,26 +38,44 @@
                         </div>
                     </div>
                 </div>
-                <div v-if="pagination.totalBooks == 0">
+                <div class="no-books" v-if="pagination.totalBooks == 0">
                     Sorry, no books found...
                 </div>
             </div>
-            <div v-if="loading">
-                Loading    
+            <div class="progress-bar" v-if="loading">
+                <div class="bar-label">
+                    Loading    
+                </div>
+                <div>
+                    <progress></progress>
+                </div>
             </div>
-            <div v-if="error != null">
-                <h2>Sorry, unexpected error has happened</h2>
-                {{ error }} 
+
+            <div class="error" v-if="error != null">
+                <h3>Sorry, unexpected error has happened</h3>
+                <p>{{ error }}</p> 
             </div>
         </div>
     </div>
 </body>
 
 <script>
+
+async function listBooks(search, page) {
+    let response = await fetch(`http://localhost:3001/search?search=${search}&page=${page}`, { method: "GET" })
+    if (response.status === 200) {
+        let json = await response.json()
+        return json
+    } else {
+        let json = await response.json()
+        throw json
+    }
+}
+
 var app = new Vue({
     el: "#app",
     data: {
-        search: "George",
+        search: "",
         books: null,
         page: 1,
         pagination: null,
@@ -65,35 +83,25 @@ var app = new Vue({
         loading: false
     },
     methods: {
-        loadBooks() {
+        async loadBooks() {
             this.error = null
             this.books = null
             this.pagination = null
             this.loading = true
-            fetch(`http://localhost:3001/search?search=${this.search}&page=${this.page}`, { method: "GET" })
-                .then(response => {
-                    if (response.status === 200) {
-                        response.json()
-                            .then(json => {
-                                this.books = json.books
-                                this.pagination = {
-                                    totalBooks: json.metadata.totalBooks,
-                                    startBook: json.metadata.startBook,
-                                    endBook: json.metadata.endBook,
-                                    totalPages: Math.ceil(json.metadata.totalBooks / json.metadata.pageSize)
-                                }
-                            })
-                    } else {
-                        response.json()
-                            .then(json => {
-                                this.error = json.message
-                            })
-                    }
-                })
-                .catch(message => {
-                    this.error = message
-                })
-                .finally(() => { this.loading = false })
+
+            try {
+                let json = await listBooks(this.search, this.page)
+                this.books = json.books
+                this.pagination = {
+                    totalBooks: json.metadata.totalBooks,
+                    startBook: json.metadata.startBook,
+                    endBook: json.metadata.endBook,
+                    totalPages: Math.ceil(json.metadata.totalBooks / json.metadata.pageSize)
+                }
+            } catch (err) {
+                this.error = err.message
+            }
+            this.loading = false
         },
         doSearch() {
             this.page = 1

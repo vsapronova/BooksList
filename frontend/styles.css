@@ -1,20 +1,21 @@
 .container {
-    /* min-height: 100vh; */
-    font-family: BlinkMacSystemFont,-apple-system,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,Helvetica,Arial,sans-serif;  
+    font-family: BlinkMacSystemFont,-apple-system,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,Helvetica,Arial,sans-serif; 
 }
 
-/* .fixed-div {
-    width: 100%;
-    position: fixed;
-    top: 0;
-    z-index: 1000;
-} */
+.static-block {
+    position: fixed; 
+    top: 0px; 
+    width: 100%; 
+    background-color: white;
+    padding-bottom: 20px;
+}
 
 .header {
     display: flex;
     justify-content: center;
+    text-align: center;
     align-items: center;
-    margin-top: 1rem;
+    margin-top: 15px;
 }
 
 h1 {
@@ -22,17 +23,18 @@ h1 {
     font-weight: 400;
 }
 
-.search {
+.search-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr min-content 1fr;
+    grid-template-columns: 1fr minmax(300px, 1fr) min-content 1fr;
     grid-template-rows: 1fr;
 }
 
-::placeholder {
+.input::placeholder {
     color: #dbdbdb;
 }
 
-input {
+.input {
+    box-sizing: border-box; 
     border-color: #dbdbdb;
     height: 40px;
     cursor: text;
@@ -56,32 +58,29 @@ input {
     grid-column: 3/4;
     grid-row: 1/2;
     border-radius: 4px;
-    border-color: #dbdbdb;
-    border: 1px solid transparent;
-    background: #DCADDD;
+    background: #4A4A4A;
     color: white;
     font-size: 1.25rem;
     font-weight: 500;
-    height: 42px;
     padding: 0px 10px;
     margin: 0px;
     margin-left: 10px;
+    cursor: pointer;
 }
 
 .button:disabled {
-    background: #4a4a4a;
-    color: lightgray;
+    background: white;
+    color: #4A4A4A;
 }
 
-.pages {
-    width: 100%;
+.pagination {
+    width: 95%;
     display: inline-block;
     text-align: right;
-    margin-right: 40px;
+    margin-right: 5%;
 }
 
-/* pagination-button please!!!! */
-.pages-button {
+.pagination button {
     border: 1px solid transparent;
     background: white;
     font-weight: 600;
@@ -89,16 +88,23 @@ input {
     cursor: pointer;
 }
 
-.pages-button:disabled {
+.pagination button:disabled {
     color: lightgray;
 }
 
+.books-start-end {
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.books-block {
+    padding-top: 200px;
+}
+
 .books-cards {
-    margin-top: 150px;
-    overflow: auto;
-    margin: 1rem 1rem;
+    margin: 30px 50px;
     display: grid;
-    grid-template-columns: repeat(4, minmax(min-content, 300px));
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     grid-template-rows: min-content;
     grid-gap: 20px;
 }
@@ -124,4 +130,22 @@ input {
     margin-top: 10px;
 }
 
+.error {
+    color: red;
+    display: grid;
+    place-items: center;
+}
 
+.no-books {
+    display: grid;
+    place-items: center;
+}
+
+.progress-bar {
+    display: flex;
+    justify-content: center;
+}
+
+.bar-label {
+    margin-right: 10px;
+}

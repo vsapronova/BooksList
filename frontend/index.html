@@ -17,7 +17,7 @@
             <form @submit.prevent="doSearch()">
                 <div class="search-grid">
                     <input v-model="search" class="input" placeholder="Goodreads Book" />
-                    <label class="input-label">You can enter book or author or title or phrase</label>
+                    <label class="input-label">You can enter an author or book title or phrase</label>
                     <button class="button" type="submit" v-bind:disabled="search === ''">Search</button>
                 </div>
             </form>

@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link href="styles.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
-
     <title>FindYourBook</title>
 </head>
 <body>
@@ -59,65 +58,6 @@
     </div>
 </body>
 
-<script>
+<script src="index.js"></script>
 
-async function listBooks(search, page) {
-    let response = await fetch(`http://localhost:3001/search?search=${search}&page=${page}`, { method: "GET" })
-    if (response.status === 200) {
-        let json = await response.json()
-        return json
-    } else {
-        let json = await response.json()
-        throw json
-    }
-}
-
-var app = new Vue({
-    el: "#app",
-    data: {
-        search: "",
-        books: null,
-        page: 1,
-        pagination: null,
-        error: null,
-        loading: false
-    },
-    methods: {
-        async loadBooks() {
-            this.error = null
-            this.books = null
-            this.pagination = null
-            this.loading = true
-
-            try {
-                let json = await listBooks(this.search, this.page)
-                this.books = json.books
-                this.pagination = {
-                    totalBooks: json.metadata.totalBooks,
-                    startBook: json.metadata.startBook,
-                    endBook: json.metadata.endBook,
-                    totalPages: Math.ceil(json.metadata.totalBooks / json.metadata.pageSize)
-                }
-            } catch (err) {
-                this.error = err.message
-            }
-            this.loading = false
-        },
-        doSearch() {
-            this.page = 1
-            this.loadBooks()
-        },
-        pagePrev() {
-            this.page = this.page-1
-            this.loadBooks()
-
-        },
-        pageNext() {
-            this.page = this.page+1
-            this.loadBooks()
-
-        }
-    }
-})
-</script>
 </html>

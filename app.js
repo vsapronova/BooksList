@@ -9,6 +9,8 @@ app.use(cors())
 
 process.env.GOODREADS_KEY = 'RDfV4oPehM6jNhxfNQzzQ';
 
+app.use(express.static('public'))
+
 app.get('/search', async (req, res) => {
     if (req.query.search == undefined) {
         res.status(400)

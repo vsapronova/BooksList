@@ -1,5 +1,5 @@
 async function listBooks(search, page) {
-    let response = await fetch(`/search?search=${search}&page=${page}`, { method: "GET" })
+    let response = await fetch(`/api/books?search=${search}&page=${page}`, { method: "GET" })
     if (response.status === 200) {
         let json = await response.json()
         return json
